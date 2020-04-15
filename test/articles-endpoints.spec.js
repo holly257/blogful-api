@@ -70,4 +70,34 @@ describe.only('Articles Endpoints', function() {
         })
     })
 
+    describe('POST /articles', () => {
+        it('creates an article, responding with 201 and the new article', () => {
+            this.retries(3)
+            const newArticle = {
+                style: 'Listicle',
+                title: 'test post!',
+                content: 'Lorem ipsum dolor consectetur adipisicing elit. Natus consequuntur deserunt commodi, nobis qui inventore corrupti iusto aliquid debitis unde non.Adipisci, pariatur.Molestiae, libero esse hic adipisci autem neque ?'
+            }
+            return supertest(app)
+                .post('/articles')
+                .send(newArticle)
+                .expect(201)
+                .expect(res => {
+                    expect(res.body.title).to.eql(newArticle.title)
+                    expect(res.body.content).to.eql(newArticle.content)
+                    expect(res.body.style).to.eql(newArticle.style)
+                    expect(res.body).to.have.property('id')
+                    expect(res.headers.location).to.eql(`/articles/${res.body.id}`)
+                    const expected = new Date().toLocaleString()
+                    const actual = new Date(res.body.date_published).toLocaleString()
+                    expect(actual).to.eql(expected)
+                })
+                .then(postRes => 
+                    supertest(app)
+                        .get(`/articles/${postRes.body.id}`)
+                        .expect(postRes.body)
+                )
+        })
+    })
+
 })
