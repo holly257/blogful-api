@@ -98,6 +98,26 @@ describe.only('Articles Endpoints', function() {
                         .expect(postRes.body)
                 )
         })
+
+        const requiredFields = ['title', 'style', 'content']
+        requiredFields.forEach(field => {
+            const newArticle = { 
+                title: 'test new article',
+                style: 'Listicle',
+                content: 'test new content...'
+            }
+        
+            it(`responds with 400 and an error message when the '${field}' is missing`, () => {
+                delete newArticle[field]
+
+                return supertest(app)
+                    .post('/articles')
+                    .send(newArticle)
+                    .expect(400, {
+                        error: { message: `Missing '${field}' in the request body`}
+                    })
+            })
+        })
     })
 
 })
