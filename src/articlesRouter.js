@@ -34,7 +34,7 @@ articlesRouter
             .then(article => {
                 res
                     .status(201)
-                    .location(`/articles/${article.id}`)
+                    .location(`/api/articles/${article.id}`)
                     .json(article)
             })
             .catch(next)
