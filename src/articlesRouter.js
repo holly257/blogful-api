@@ -17,7 +17,7 @@ articlesRouter
             .catch(next)
         })
     .post(jsonParser, (req, res, next) => {
-        const { title, content, style } = req.body
+        const { title, content, style, author } = req.body
         const newArticle = { title, content, style }
 
         for( const [key, value] of Object.entries(newArticle)) {
@@ -27,6 +27,8 @@ articlesRouter
                 })
             }
         }
+
+        newArticle.author = author
 
         ArticlesService.insertArticles(
             req.app.get('db'),
@@ -66,6 +68,7 @@ articlesRouter
             title: xss(res.article.title),
             content: xss(res.article.content),
             date_published: res.article.date_published,
+            author: res.article.author,
         })
     })
     .delete((req, res, next) => {
